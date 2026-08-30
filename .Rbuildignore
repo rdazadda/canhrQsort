@@ -7,3 +7,4 @@
 ^app\.R$
 ^manifest\.json$
 ^rsconnect$
+^LICENSE\.md$

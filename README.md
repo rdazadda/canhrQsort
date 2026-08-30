@@ -2,8 +2,9 @@
 
 **Use it here: [rdazadda-canhrqsort.share.connect.posit.cloud](https://rdazadda-canhrqsort.share.connect.posit.cloud)**
 
-A dashboard for Q-methodology analysis, built at the Center for Alaska
-Native Health Research (CANHR), University of Alaska. Upload a study's
+A dashboard for Q-sort analysis, built at the Center for Alaska
+Native Health Research (CANHR), University of Alaska Fairbanks. Upload a
+study's
 sorts, run the frequentist or the Bayesian analysis, read the results on
 screen, and download the figures and the full results as Excel files.
 
@@ -66,4 +67,4 @@ is documented with the bayesqm package.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE.md](LICENSE.md).

@@ -10,8 +10,9 @@ Authors@R: c(
     person("Karsten", "Hueffer", role = "aut"),
     person("Taa'aii", "Peter", role = "aut"),
     person("Stacy", "Rasmus", role = "aut"))
-Description: A dashboard for Q-methodology analysis, built at the Center
-    for Alaska Native Health Research (CANHR), University of Alaska.
+Description: A dashboard for Q-sort analysis, built at the Center
+    for Alaska Native Health Research (CANHR), University of Alaska
+    Fairbanks.
     Imports sorts from CSV, Excel, PQMethod, HTMLQ, FlashQ, and Ken-Q
     files; ranks statement priorities, with demographic subgroup
     comparisons and a rank-flow chart; runs the classical factor
