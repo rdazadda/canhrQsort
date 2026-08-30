@@ -1,7 +1,6 @@
 # canhrQsort
 
-**Use it here: [rdazadda-canhrqsort.share.connect.posit.cloud](https://rdazadda-canhrqsort.share.connect.posit.cloud).**
-Nothing to install.
+**Use it here: [rdazadda-canhrqsort.share.connect.posit.cloud](https://rdazadda-canhrqsort.share.connect.posit.cloud)**
 
 A dashboard for Q-methodology analysis, built at the Center for Alaska
 Native Health Research (CANHR), University of Alaska. Upload a study's
