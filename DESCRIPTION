@@ -1,0 +1,96 @@
+Package: canhrQsort
+Title: Q-Sort Methodology Analysis Dashboard
+Version: 0.1.0
+Authors@R: c(
+    person(given = "Raymond Dacosta", family = "Azadda",
+           email = "rdazadda@alaska.edu",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0002-4384-4556")),
+    person(family = "AK-ACE Team", role = "aut"),
+    person("Karsten", "Hueffer", role = "aut"),
+    person("Taa'aii", "Peter", role = "aut"),
+    person("Stacy", "Rasmus", role = "aut"))
+Description: A dashboard for Q-methodology analysis, built at the Center
+    for Alaska Native Health Research (CANHR), University of Alaska.
+    Imports sorts from CSV, Excel, PQMethod, HTMLQ, FlashQ, and Ken-Q
+    files; ranks statement priorities, with demographic subgroup
+    comparisons and a rank-flow chart; runs the classical factor
+    analysis (extraction, rotation, flagging, bootstrap stability) and a
+    Bayesian analysis through the 'bayesqm' engine; and exports the
+    figures and complete results as Excel files.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+URL: https://github.com/rdazadda/canhrQsort
+BugReports: https://github.com/rdazadda/canhrQsort/issues
+Remotes: rdazadda/bayesqm
+Depends:
+    R (>= 4.1.0)
+Imports:
+    bayesqm (>= 0.2.0),
+    tidyr (>= 1.3.0),
+    tibble (>= 3.2.0),
+    ggplot2 (>= 3.4.0),
+    gridExtra,
+    grid,
+    scales,
+    stringr (>= 1.5.0),
+    readr (>= 2.1.0),
+    readxl (>= 1.4.0),
+    jsonlite (>= 1.8.0),
+    cli (>= 3.6.0),
+    rlang (>= 1.1.0),
+    glue (>= 1.6.0),
+    GPArotation (>= 2024.3-1),
+    psych (>= 2.4.0),
+    methods,
+    stats,
+    grDevices,
+    graphics,
+    tools,
+    utils
+Suggests:
+    zip (>= 2.3.0),
+    coin (>= 1.4-3),
+    ggalluvial (>= 0.12.5),
+    shiny (>= 1.8.0),
+    bslib (>= 0.6.0),
+    thematic (>= 0.1.3),
+    htmltools (>= 0.5.0),
+    DT (>= 0.31),
+    plotly (>= 4.10.0),
+    openxlsx (>= 4.2.0),
+    testthat (>= 3.2.0),
+    parallel,
+    future (>= 1.33.0),
+    promises (>= 1.2.0),
+    furrr (>= 0.3.0),
+    progressr (>= 0.14.0),
+    pkgload
+Config/testthat/edition: 3
+Collate:
+    'canhrQsort-package.R'
+    'data.R'
+    'classes.R'
+    'attributes.R'
+    'priorities.R'
+    'export-workbook.R'
+    'utils.R'
+    'validation.R'
+    'import-generic.R'
+    'import-specialized.R'
+    'analysis-core.R'
+    'bootstrap.R'
+    'visualization.R'
+    'visualization-plots.R'
+    'app-ui-theme.R'
+    'app-ui-components.R'
+    'app-main.R'
+    'app-page-home.R'
+    'app-page-analyze-priorities.R'
+    'app-page-analyze-factors.R'
+    'app-page-analyze.R'
+    'app-page-visualize.R'
+    'app-page-bayesian.R'
+    'shiny-app.R'
+Config/roxygen2/version: 8.0.0

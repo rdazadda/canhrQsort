@@ -1,0 +1,14 @@
+# R user files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Build artifacts
+*.tar.gz
+*.Rcheck/
+Rplots.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
