@@ -30,6 +30,23 @@ run_canhrqsort <- function(data = NULL,
                            launch.browser = TRUE,
                            port = NULL,
                            ...) {
+  app <- qsort_app(data = data)
+  if (!is.null(port)) {
+    shiny::runApp(app, launch.browser = launch.browser, port = port, ...)
+  } else {
+    shiny::runApp(app, launch.browser = launch.browser, ...)
+  }
+}
+
+#' Build the Dashboard App Object
+#'
+#' The app object without running it, for hosts like Posit Connect.
+#' [run_qsort_app()] runs it locally.
+#'
+#' @param data Optional QsortData object to preload
+#' @return A shiny app object
+#' @export
+qsort_app <- function(data = NULL) {
 
   required_pkgs <- c("shiny", "bslib", "htmltools", "DT", "plotly")
   missing <- required_pkgs[!sapply(required_pkgs, requireNamespace, quietly = TRUE)]
@@ -67,17 +84,10 @@ run_canhrqsort <- function(data = NULL,
     message("Warning: Could not find www directory for static resources")
   }
 
-  app <- shiny::shinyApp(
+  shiny::shinyApp(
     ui = canhrqsort_ui(),
     server = canhrqsort_server(preload_data = data)
   )
-
-  # Run the app
-  if (!is.null(port)) {
-    shiny::runApp(app, launch.browser = launch.browser, port = port, ...)
-  } else {
-    shiny::runApp(app, launch.browser = launch.browser, ...)
-  }
 }
 
 

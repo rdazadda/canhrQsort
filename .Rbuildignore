@@ -4,3 +4,6 @@
 ^\.Rhistory$
 ^Rplots\.pdf$
 ^\.gitignore$
+^app\.R$
+^manifest\.json$
+^rsconnect$
