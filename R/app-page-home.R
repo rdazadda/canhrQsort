@@ -1,6 +1,6 @@
 #' @title Overview Page Module (merged Overview + Upload)
-#' @description The single front door of the dashboard. Before data: a plain
-#' product statement, a drag-and-drop import zone showing the forced
+#' @description The single front door of the dashboard. Before data: the
+#' logo, one line per analysis, a drag-and-drop import zone showing the forced
 #' distribution as outline tiles with one gold apex, and a quiet list of
 #' sample datasets. After data: the dataset title with provenance and
 #' validation, the distribution fingerprint in the rank-color ramp, a
@@ -146,12 +146,18 @@ home_page_server <- function(id, rv, parent_session) {
         htmltools::div(
           class = "ov2-hero",
           htmltools::div(
-            htmltools::h1(class = "ov2-h1", "Factor analysis for Q sorts"),
-            htmltools::p(
-              class = "ov2-lede",
-              "Run centroid or PCA with varimax or manual rotation and bootstrap ",
-              "confidence intervals, or fit a Bayesian model with credible intervals ",
-              "and model comparison for K."
+            htmltools::tags$img(src = "www/logo.png", alt = "canhrQsort", class = "ov2-logo"),
+            htmltools::h1(class = "ov2-h1", "Analyze a Q-sort study"),
+            htmltools::div(
+              class = "ov2-methods",
+              htmltools::div(class = "ov2-method", "Priorities"),
+              htmltools::div("Ranks statements by average placement and compares rankings ",
+                             "across demographic groups."),
+              htmltools::div(class = "ov2-method", "Factors"),
+              htmltools::div("Identifies shared viewpoints using classical factor analysis."),
+              htmltools::div(class = "ov2-method", "Bayesian"),
+              htmltools::div("Identifies shared viewpoints using Bayesian factor analysis ",
+                             "and quantifies the uncertainty in each result.")
             )
           ),
           htmltools::div(

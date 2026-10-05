@@ -4,8 +4,8 @@
 \alias{app-page-home}
 \title{Overview Page Module (merged Overview + Upload)}
 \description{
-The single front door of the dashboard. Before data: a plain
-product statement, a drag-and-drop import zone showing the forced
+The single front door of the dashboard. Before data: the
+logo, one line per analysis, a drag-and-drop import zone showing the forced
 distribution as outline tiles with one gold apex, and a quiet list of
 sample datasets. After data: the dataset title with provenance and
 validation, the distribution fingerprint in the rank-color ramp, a

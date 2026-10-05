@@ -6991,12 +6991,28 @@ body { font-size: var(--text-base); }
   letter-spacing: -0.5px;
 }
 
-.ov2-lede {
-  margin: 16px 0 0;
-  color: #334155;
-  font-size: 15px;
-  line-height: 1.65;
-  max-width: 58ch;
+/* The PNG has a transparent margin; pull it left so the hexagon lines up with the headline */
+.ov2-logo {
+  display: block;
+  height: 216px;
+  width: auto;
+  margin: 0 0 28px -12px;
+}
+
+.ov2-methods {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 10px 16px;
+  max-width: 600px;
+  margin-top: 18px;
+  color: #2d3748;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ov2-method {
+  color: #1a202c;
+  font-weight: 600;
 }
 
 /* Drop zone (the hidden file input stretches over the whole zone) */
