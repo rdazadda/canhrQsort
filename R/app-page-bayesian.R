@@ -139,6 +139,82 @@ run_bayesqm_job <- function(Y, distribution, mode, K, k_min, k_max, q,
   }
 }
 
+#' The Bayesian job as a self-contained closure for a background process
+#'
+#' Copies `run_bayesqm_job()` and the two helpers it calls into a private
+#' environment, so the closure serializes by value. The background R process
+#' then loads only bayesqm, not this package and everything it imports.
+#' @keywords internal
+bq_portable_job <- function() {
+  env <- new.env(parent = globalenv())
+  fns <- list(run_bayesqm_job = run_bayesqm_job,
+              bq_table_bundle = bq_table_bundle,
+              bq_strip_fit = bq_strip_fit)
+  for (nm in names(fns)) {
+    f <- fns[[nm]]
+    environment(f) <- env
+    assign(nm, f, envir = env)
+  }
+  env$run_bayesqm_job
+}
+
+# Background runs are shared by every session in this R process. One run at
+# a time keeps the container's memory predictable; later runs wait their turn.
+.bq_background <- new.env(parent = emptyenv())
+.bq_background$running <- 0L
+
+#' Run a function in a short-lived background R process, as a promise
+#'
+#' The process starts for the call and exits when it returns, so it holds
+#' memory only while the job runs, and the main R process stays free to serve
+#' every session meanwhile. Runs from all sessions go one at a time.
+#' @param func A self-contained function, see [bq_portable_job()].
+#' @param args Named list of arguments for `func`.
+#' @param poll Seconds between status checks.
+#' @return A promise that resolves to the value of `func`.
+#' @keywords internal
+bq_run_in_background <- function(func, args, poll = 0.5) {
+  promises::promise(function(resolve, reject) {
+    proc <- NULL
+    release <- function() {
+      .bq_background$running <- max(0L, .bq_background$running - 1L)
+    }
+    tick <- function() {
+      if (is.null(proc)) {
+        if (.bq_background$running > 0L) {
+          later::later(tick, poll)
+          return(invisible())
+        }
+        .bq_background$running <- .bq_background$running + 1L
+        started <- tryCatch(
+          callr::r_bg(func, args = args, package = TRUE, supervise = TRUE,
+                      stdout = NULL, stderr = NULL),
+          error = function(e) e
+        )
+        if (inherits(started, "error")) {
+          release()
+          reject(started)
+          return(invisible())
+        }
+        proc <<- started
+      }
+      if (proc$is_alive()) {
+        later::later(tick, poll)
+        return(invisible())
+      }
+      release()
+      out <- tryCatch(proc$get_result(), error = function(e) e)
+      if (inherits(out, "error")) {
+        # Surface the job's own error, not callr's wrapper around it
+        reject(if (inherits(out$parent, "error")) out$parent else out)
+      } else {
+        resolve(out)
+      }
+    }
+    tick()
+  })
+}
+
 #' Mutual-unspanned cluster signal from a stored person-check table
 #' @keywords internal
 bq_unspanned_cluster <- function(pc) {
@@ -676,39 +752,25 @@ bayesian_page_server <- function(id, rv, parent_session) {
     })
 
     # Async ExtendedTask ----
-    has_async <- requireNamespace("future", quietly = TRUE) &&
-                 requireNamespace("promises", quietly = TRUE)
-
-    # Source path of a dev-loaded canhrQsort (pkgload), so background
-    # workers can load the same code; NULL when running the installed package.
-    dev_pkg_path <- tryCatch({
-      if (requireNamespace("pkgload", quietly = TRUE) &&
-          pkgload::is_dev_package("canhrQsort")) {
-        find.package("canhrQsort")
-      } else NULL
-    }, error = function(e) NULL)
+    # Each run gets its own short-lived background R process, so the page
+    # stays responsive while the sampler works and no worker process sits in
+    # memory when nobody is fitting a model.
+    has_async <- requireNamespace("callr", quietly = TRUE) &&
+                 requireNamespace("promises", quietly = TRUE) &&
+                 requireNamespace("later", quietly = TRUE)
 
     if (has_async) {
-      future::plan(future::multisession, workers = 2)
-
       bayes_task <- shiny::ExtendedTask$new(function(Y, distribution, mode, K,
                                                      k_min, k_max, q,
                                                      iterations, burn, thin,
                                                      max_iterations, seed,
-                                                     sigma_scale, lib_paths,
-                                                     pkg_path) {
-        promises::future_promise({
-          .libPaths(lib_paths)
-          if (!is.null(pkg_path) && file.exists(file.path(pkg_path, "DESCRIPTION"))) {
-            pkgload::load_all(pkg_path, quiet = TRUE)
-          } else {
-            library(canhrQsort)
-          }
-          canhrQsort:::run_bayesqm_job(
-            Y, distribution, mode, K, k_min, k_max, q,
-            iterations, burn, thin, max_iterations, seed, sigma_scale
-          )
-        }, seed = TRUE)
+                                                     sigma_scale) {
+        bq_run_in_background(bq_portable_job(), list(
+          Y = Y, distribution = distribution, mode = mode, K = K,
+          k_min = k_min, k_max = k_max, q = q, iterations = iterations,
+          burn = burn, thin = thin, max_iterations = max_iterations,
+          seed = seed, sigma_scale = sigma_scale
+        ))
       })
     }
 
@@ -854,7 +916,7 @@ bayesian_page_server <- function(id, rv, parent_session) {
       if (has_async) {
         bayes_task$invoke(Y, distribution, mode, K, k_min, k_max, s$q,
                           s$iterations, s$burn, s$thin, s$max_iterations,
-                          s$seed, s$sigma_scale, .libPaths(), dev_pkg_path)
+                          s$seed, s$sigma_scale)
       } else {
         shiny::withProgress(message = "Bayesian analysis (bayesqm)", value = 0.3, {
           result <- tryCatch(
